@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>WebSocket Test</title>
+    <link rel="stylesheet" href="client.css">
+    <script src="client.js"></script>
+</head>
+<body>
+<div class="container">
+    <div id="connect-container" class="container">
+        <input id="connect-button" type="button" value="Connect">
+        <label for="username">Username: </label>
+        <input id="username" type="text" placeholder="Username">
+    </div>
+    <div id="disconnect-container" class="container">
+        <input id="close-button" type="button" value="Disconnect">
+        <p>Connected as: <span id="connected-user" class="response-username"></span></p>
+    </div>
+    <div class="spinner">
+        <div class="bounce1"></div>
+        <div class="bounce2"></div>
+        <div class="bounce3"></div>
+    </div>
+</div>
+<div class="container">
+    <input id="send-button" type="button" value="Send">
+    <label for="message">Text: </label>
+    <input id="message" type="text">
+</div>
+    <div id="received-messages">
+
+    </div>
+</body>
+</html>
