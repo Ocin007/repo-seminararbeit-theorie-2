@@ -19,15 +19,18 @@ p {
 }
 .err-message {
     color: red;
+    font-weight: bolder;
 }
 #disconnect-container {
     display: none;
 }
 .response-otheruser {
     color: #01bbff;
+    font-weight: bolder;
 }
 .response-username {
     color: #00c800;
+    font-weight: bolder;
 }
 
 

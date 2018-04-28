@@ -80,6 +80,8 @@ function initWS() {
             var str;
             if(username === response.username) {
                 str = '<span class="response-username">['+response.username+']</span> '+response.message;
+            } else if(response.username === 'Server') {
+                str = '<span class="err-message">['+response.username+']</span> '+response.message;
             } else {
                 str = '<span class="response-otheruser">['+response.username+']</span> '+response.message;
             }

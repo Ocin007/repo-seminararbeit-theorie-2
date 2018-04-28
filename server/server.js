@@ -47,7 +47,8 @@ function removeDisconnectedUsers() {
 }
 
 wss.on('connection', function (ws) {
-    console.log('50: New client connected');
+    sendMsgToAllCliends('User Connected', 'Server');
+    console.log('51: New client connected');
     var uuid = uuidv1();
     connectedClients.push({
         uuid: uuid,
@@ -59,7 +60,7 @@ wss.on('connection', function (ws) {
     }));
 
     ws.on('message', function (message) {
-        console.log('62: Got message: '+message);
+        console.log('63: Got message: '+message);
         var request = JSON.parse(message);
         if(request.message === undefined) {
             setUserName(request);
@@ -71,6 +72,7 @@ wss.on('connection', function (ws) {
 
     ws.on('close', function (code, reason) {
         removeDisconnectedUsers();
-        console.log('74: Client closed connection, code '+code+': '+reason);
+        sendMsgToAllCliends('User Disconnected', 'Server');
+        console.log('76: Client closed connection, code '+code+': '+reason);
     })
 });
