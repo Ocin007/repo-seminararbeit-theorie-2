@@ -8,12 +8,13 @@ document.addEventListener('DOMContentLoaded', function () {
     document.getElementById('send-button').addEventListener("click", sendMessage);
     document.getElementById('message').addEventListener("keydown", sendMessage);
     document.getElementById('close-button').addEventListener("click", disconnect);
+    showNumOfOnlineUsers('-');
 });
 
-//TODO: Event für Schließen der Seite
-document.addEventListener('close', function () {
+//buggy
+document.addEventListener('unload', function () {
     console.warn('------------------------------');
-    ws.close(1001, 'user '+username+' left the side');
+    ws.close(1001, 'user '+username+' left the page');
 });
 
 function setSpinnerVisibility(state) {
@@ -29,6 +30,10 @@ function stopLoading() {
     setSpinnerVisibility('hidden');
 }
 
+function showNumOfOnlineUsers(numOnline) {
+    document.getElementById('number-online').innerText = numOnline;
+}
+
 function connect(ev) {
     var textField = document.getElementById('username');
     if((ev.key === "Enter" || ev.type === "click") && textField.value !== '') {
@@ -39,14 +44,18 @@ function connect(ev) {
 }
 
 function disconnect() {
+    showConnectionButton();
+    ws.close(1000, 'user '+username+' disconnected');
+    var str = '<span class="err-message">[Client]</span> '+'Disconnected from server';
+    insertMessageInDiv(str);
+}
+
+function showConnectionButton() {
     document.getElementById('connected-user').innerText = '';
     document.getElementById('connect-container').style.display = 'flex';
     document.getElementById('disconnect-container').style.display = 'none';
-    ws.close(1000, 'user '+username+' disconnected');
-    var str = '<span class="err-message">[Client]</span> '+'Disconnected from server';
-    insertMessageInDiv(str)
+    showNumOfOnlineUsers('-');
 }
-
 function initWS() {
 
     /**
@@ -70,7 +79,9 @@ function initWS() {
      */
     ws.onmessage = function (ev) {
         var response = JSON.parse(ev.data);
-        if(response.username === undefined) {
+        if(response.numOnline !== undefined) {
+            showNumOfOnlineUsers(response.numOnline);
+        } else if(response.username === undefined) {
             uuid = response.uuid;
             ws.send(JSON.stringify({
                 uuid: response.uuid,
@@ -97,6 +108,7 @@ function initWS() {
         console.log(err);
         insertMessageInDiv('Connection failed', 'err-message');
         stopLoading();
+        showConnectionButton();
     }
 }
 
