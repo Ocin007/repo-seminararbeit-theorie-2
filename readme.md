@@ -1,4 +1,4 @@
-#Chat Anwendung
+# Chat Anwendung
 
 - Eingabe Username + Enter -> Verbindung mit Server
 - Fokus auf Eingabefeld für Text
