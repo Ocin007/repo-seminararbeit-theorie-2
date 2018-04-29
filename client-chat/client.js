@@ -8,6 +8,7 @@ document.addEventListener('DOMContentLoaded', function () {
     document.getElementById('send-button').addEventListener("click", sendMessage);
     document.getElementById('message').addEventListener("keydown", sendMessage);
     document.getElementById('close-button').addEventListener("click", disconnect);
+    document.getElementById('username').focus();
     showNumOfOnlineUsers('-');
 });
 
@@ -54,6 +55,7 @@ function showConnectionButton() {
     document.getElementById('connected-user').innerText = '';
     document.getElementById('connect-container').style.display = 'flex';
     document.getElementById('disconnect-container').style.display = 'none';
+    document.getElementById('username').focus();
     showNumOfOnlineUsers('-');
 }
 function initWS() {
@@ -65,6 +67,7 @@ function initWS() {
         var str = '<span class="err-message">[Client]</span> '+'Connection to server opened';
         insertMessageInDiv(str);
         stopLoading();
+        document.getElementById('message').focus();
         username = document.getElementById('username').value;
         document.getElementById('connected-user').innerText = username;
         document.getElementById('connect-container').style.display = 'none';
@@ -127,11 +130,14 @@ function insertMessageInDiv(str, errClass) {
  */
 function sendMessage(ev) {
     var textField = document.getElementById('message');
+    console.log(ev.key);
     if((ev.key === "Enter" || ev.type === "click") && textField.value !== '') {
         ws.send(JSON.stringify({
             uuid: uuid,
             message: textField.value
         }));
         textField.value = '';
+    } else if(ev.key === 'Escape') {
+        disconnect();
     }
 }
