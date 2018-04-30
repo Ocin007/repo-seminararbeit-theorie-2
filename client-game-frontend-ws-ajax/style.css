@@ -1,0 +1,37 @@
+/** {*/
+    /*display: flex;*/
+/*}*/
+#point-area {
+    display: flex;
+    justify-content: space-between;
+    width: 500px;
+    height: 82px;
+}
+.game-field {
+    height: 200px;
+}
+#play-area {
+    display: flex;
+    width: 500px;
+    border: 1px solid black;
+}
+#player1-area, #player2-area {
+    width: 30px;
+    background-color: lightgray;
+}
+#player1, #player2 {
+    width: 30px;
+    height: 70px;
+    background-color: red;
+}
+#pong-area {
+    /*410 * 170*/
+    width: 440px;
+    position: relative;
+}
+#pong-ball {
+    width: 30px;
+    height: 30px;
+    background-color: black;
+    position: absolute;
+}
