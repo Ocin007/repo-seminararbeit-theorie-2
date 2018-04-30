@@ -1,7 +1,9 @@
-var pongball;
+/**
+ * größe von 'pong-area': 410x, 170y (nach abzug der größe von 'pong-ball')
+ */
 var direction = {x: -1, y: -1};
 document.addEventListener('DOMContentLoaded', function () {
-    pongball = document.getElementById('pong-ball');
+    var pongball = document.getElementById('pong-ball');
     pongball.style.left = '205px';
     pongball.style.top = '85px';
     pongball.addEventListener('click', function () {
@@ -10,11 +12,22 @@ document.addEventListener('DOMContentLoaded', function () {
             var oldY = parseInt(pongball.style.top.slice(0, pongball.style.top.length - 2));
             var x = oldX + direction.x;
             var y = oldY + direction.y;
-            if ((x <= 0 && y > 0 && y < 170) || (x >= 410 && y > 0 && y < 170)) {//links oder rechts
+            /**
+             * links oder rechts
+             */
+            if ((x <= 0 && y > 0 && y < 170) || (x >= 410 && y > 0 && y < 170)) {
                 direction.x = direction.x * (-1);
-            } else if ((x > 0 && x < 410 && y <= 0) || (x > 0 && x < 410 && y >= 170)) {//oben oder unten
+
+                /**
+                 * oben oder unten
+                 */
+            } else if ((x > 0 && x < 410 && y <= 0) || (x > 0 && x < 410 && y >= 170)) {
                 direction.y = direction.y * (-1);
-            } else if((x <= 0 && y <= 0) || (x > 410 && y > 170) || (x <= 0 && y > 170) || (x > 410 && y <= 0)) {//genau ecke: l.o, r.u,
+
+                /**
+                 * genau ecke: l.o, r.u, l.u, r.o
+                 */
+            } else if((x <= 0 && y <= 0) || (x > 410 && y > 170) || (x <= 0 && y > 170) || (x > 410 && y <= 0)) {
                 direction.x = direction.x * (-1);
                 direction.y = direction.y * (-1);
             }
@@ -23,4 +36,3 @@ document.addEventListener('DOMContentLoaded', function () {
         }, 5);
     });
 });
-/*410 * 170*/
