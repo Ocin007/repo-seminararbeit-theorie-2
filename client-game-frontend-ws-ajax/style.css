@@ -13,11 +13,11 @@ body {
     height: 82px;
 }
 .game-field {
-    height: 200px;
+    height: 400px;
 }
 #play-area {
     display: flex;
-    width: 500px;
+    width: 800px;
     border: 1px solid black;
 }
 #player1-area, #player2-area {
@@ -26,12 +26,12 @@ body {
 }
 #player1, #player2 {
     width: 30px;
-    height: 70px;
+    height: 100px;
     background-color: red;
 }
 #pong-area {
     /*410 * 170*/
-    width: 440px;
+    width: 740px;
     position: relative;
 }
 #pong-ball {
