@@ -40,3 +40,9 @@ body {
     background-color: black;
     position: absolute;
 }
+.status-disconnected {
+    color: red;
+}
+.status-connected {
+    color: green;
+}
