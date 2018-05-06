@@ -1,0 +1,14 @@
+{
+  "require": {
+  },
+  "require-dev": {
+  },
+  "autoload": {
+    "psr-4": {
+      "PongAjax\\": "pong-ajax/server-game-ajax/src/library"
+    }
+  },
+  "config": {
+    "optimize-autoloader": true
+  }
+}
