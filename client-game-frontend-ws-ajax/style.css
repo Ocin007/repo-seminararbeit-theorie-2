@@ -23,11 +23,13 @@ body {
 #player1-area, #player2-area {
     width: 30px;
     background-color: lightgray;
+    position: relative;
 }
 #player1, #player2 {
     width: 30px;
     height: 100px;
     background-color: red;
+    position: absolute;
 }
 #pong-area {
     /*410 * 170*/
@@ -40,9 +42,9 @@ body {
     background-color: black;
     position: absolute;
 }
-.status-disconnected {
+[data-status='disconnected'] {
     color: red;
 }
-.status-connected {
+[data-status='connected'] {
     color: green;
 }

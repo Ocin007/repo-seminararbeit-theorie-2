@@ -15,7 +15,7 @@ class PongAjaxApi {
     const TIMESTAMP_FILE = __DIR__.'/../../../timestamp.txt';
 
     const TYPE_CONNECT = 'connect';
-    const TYPE_CLEAR = 'clear';//TODO: Zurücksetzen Timestamp und Spieler
+    const TYPE_CLEAR = 'clear';
 
     private $request;
     private $response;
@@ -51,6 +51,7 @@ class PongAjaxApi {
     public function execute() {
         switch($this->request->getType()) {
             case PongAjaxApi::TYPE_CONNECT: $this->connectPlayer(); break;
+            case PongAjaxApi::TYPE_CLEAR: $this->clearAllFiles(); break;
             default: $this->response = ['error' => 'undefined type of request'];
         }
     }
@@ -79,5 +80,15 @@ class PongAjaxApi {
                 $this->timer->set();
             }
         }
+    }
+
+    /**
+     * @throws \Exception
+     */
+    private function clearAllFiles() {
+        $this->filePersister->player1('');
+        $this->filePersister->player2('');
+        $this->filePersister->timestamp('');
+        $this->response = ['response' => 'all cleared'];
     }
 }

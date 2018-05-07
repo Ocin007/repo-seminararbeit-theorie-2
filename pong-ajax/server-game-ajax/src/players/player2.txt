@@ -1,1 +1,1 @@
-"{\"uuid\":\"5aef8245cbf96\",\"posX\":null,\"posY\":null}"
+""

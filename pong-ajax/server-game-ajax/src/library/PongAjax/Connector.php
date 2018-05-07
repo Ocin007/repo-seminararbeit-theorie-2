@@ -28,7 +28,7 @@ class Connector {
      * @throws \Exception
      */
     public function isFull() {
-        return $this->reader->player1() != "" && $this->reader->player2() != "";
+        return $this->reader->player1() != '""' && $this->reader->player2() != '""';
     }
 
     /**
@@ -39,10 +39,9 @@ class Connector {
         $uuid = uniqid();
         $playerJson = json_encode([
             'uuid' => $uuid,
-            'posX' => NULL,
-            'posY' => NULL
+            'pos' => NULL
         ]);
-        if($this->reader->player1() == "") {
+        if($this->reader->player1() == '""') {
             $number = 1;
             $this->persister->player1($playerJson);
         } else {
