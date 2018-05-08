@@ -5,7 +5,9 @@ var settings = {
 };
 var pong = {
     posX: null,
-    posY: null
+    posY: null,
+    speedX: null,
+    speedY: null
 };
 var intervalID;
 
@@ -29,6 +31,24 @@ function setStatus(status, message) {
     element.innerHTML = message;
 }
 
+//TODO: Im Intervall (per long-polling) die Position des 2. Spielers abfragen
+function getOtherPlayerMovement() {
+    sendAjaxRequest('pos-get', settings, function (xhttp) {
+        responseCallback(xhttp, onError, function (xhttp) {
+
+        });
+    });
+}
+
+//TODO: Timestamp (per long-polling) abfragen
+function getStartTime() {
+    sendAjaxRequest('timer', null, function (xhttp) {
+        responseCallback(xhttp, onError, function (xhttp) {
+
+        });
+    });
+}
+
 function saveConnectionInfos(resObj) {
     if(resObj.uuid === null) {
         setStatus('disconnected', 'already 2 players online');
@@ -37,6 +57,8 @@ function saveConnectionInfos(resObj) {
         settings.player = resObj.number;
         settings.uuid = resObj.uuid;
         enableMovement();
+        getOtherPlayerMovement();
+        getStartTime();
     }
 }
 
@@ -49,11 +71,14 @@ function movePlayerWithKey(ev, player) {
         settings.pos = settings.pos + 20;
     }
     if(boolUp || boolDown) {
+
+        //TODO: mögliche code-dublizierung vermeiden
         player.style.top = settings.pos.toString()+'px';
-        //TODO: Übermitteln der Bewegungen an den Server
-        // sendAjaxRequest('move', settings, function (xhttp) {
-        //
-        // });
+        sendAjaxRequest('pos-set', settings, function (xhttp) {
+            responseCallback(xhttp, onError, posSetCallback);
+        });
+
+
     }
 }
 
@@ -62,6 +87,11 @@ function movePlayerWithKey(ev, player) {
 function movePlayerWithMouse(ev, player) {
     console.log('movePlayerWithMouse');
     console.log(ev);
+}
+
+//TODO: Übermitteln der Bewegungen an den Server
+function posSetCallback(xhttp) {
+
 }
 
 function enableMovement() {
@@ -79,32 +109,40 @@ function enableMovement() {
     player.focus();
 }
 
-function connectCallback(xhttp) {
+function responseCallback(xhttp, onError, onSuccess) {
     if (xhttp.status >= 200 && xhttp.status < 300) {
         try {
-            var resObj = JSON.parse(xhttp.response);
-            console.log(resObj);
-            if(resObj['response'] !== undefined) {
-                saveConnectionInfos(resObj['response']);
-            } else if(resObj['exception'] !== undefined) {
-                document.getElementById('status').innerHTML = 'exception: '+resObj['exception'];
-            } else {
-                document.getElementById('status').innerHTML = 'error: '+resObj['error'];
-            }
+            onSuccess(xhttp);
         } catch (e) {
-            console.warn(e);
-            console.log(xhttp.response);
-            setStatus('none', xhttp.response);
+            onError(e, xhttp);
         }
     } else {
         console.warn('fehlgeschlagen, '+xhttp.status);
     }
 }
 
+function onError(errMsg, xhttp) {
+    console.log(xhttp.response);
+    console.warn(errMsg);
+    setStatus('none', xhttp.response);
+}
+
+function connectPlayer(xhttp) {
+    var resObj = JSON.parse(xhttp.response);
+    console.log(resObj);
+    if(resObj['response'] !== undefined) {
+        saveConnectionInfos(resObj['response']);
+    } else if(resObj['exception'] !== undefined) {
+        document.getElementById('status').innerHTML = 'exception: '+resObj['exception'];
+    } else {
+        document.getElementById('status').innerHTML = 'error: '+resObj['error'];
+    }
+}
+
 document.addEventListener('DOMContentLoaded', function () {
     document.getElementById('connect').addEventListener('click', function () {
         sendAjaxRequest('connect', null, function (xhttp) {
-            connectCallback(xhttp);
+            responseCallback(xhttp, onError, connectPlayer);
         });
     });
     document.getElementsByTagName('body')[0].addEventListener('unload', function () {
