@@ -17,7 +17,7 @@ class PongAjaxApi {
     const TYPE_CONNECT = 'connect';
     const TYPE_CLEAR = 'clear';
     const TYPE_POS_GET = 'pos-get';//TODO: Zurücksenden der Position des anderen Spielers (long-polling)
-    const TYPE_POS_SET = 'pos-set';//TODO: Setzen der Position des Spielers
+    const TYPE_POS_SET = 'pos-set';
     const TYPE_TIMER = 'timer';//TODO: Zurücksenden des Timestamp (long-polling)
 
     private $request;
@@ -27,6 +27,7 @@ class PongAjaxApi {
     private $filePersister;
     private $timer;
     private $connector;
+    private $posSetter;
 
     /**
      * PongAjaxApi constructor.
@@ -45,7 +46,7 @@ class PongAjaxApi {
         $this->connector = new Connector($this->fileReader, $this->filePersister);
 //        $this->disconnector = new Disconnector($this->fileReader, $this->filePersister);
 //        $this->posGetter = new PosGetter($this->fileReader);
-//        $this->posSetter = new PosSetter($this->filePersister);
+        $this->posSetter = new PosSetter($this->filePersister);
     }
 
     /**
@@ -55,6 +56,7 @@ class PongAjaxApi {
         switch($this->request->getType()) {
             case PongAjaxApi::TYPE_CONNECT: $this->connectPlayer(); break;
             case PongAjaxApi::TYPE_CLEAR: $this->clearAllFiles(); break;
+            case PongAjaxApi::TYPE_POS_SET: $this->setPosition(); break;
             default: $this->response = ['error' => 'undefined type of request'];
         }
     }
@@ -93,5 +95,17 @@ class PongAjaxApi {
         $this->filePersister->player2('');
         $this->filePersister->timestamp('');
         $this->response = ['response' => 'all cleared'];
+    }
+
+    /**
+     * @throws \Exception
+     */
+    private function setPosition() {
+        $data = $this->request->getData();
+        if($data['player'] === 1) {
+            $this->response = $this->posSetter->player1($data);
+        } else {
+            $this->response = $this->posSetter->player2($data);
+        }
     }
 }
