@@ -37,10 +37,10 @@ class Connector {
      */
     public function connectPlayer() {
         $uuid = uniqid();
-        $playerJson = json_encode([
+        $playerJson = [
             'uuid' => $uuid,
             'pos' => NULL
-        ]);
+        ];
         if($this->reader->player1() == '""') {
             $number = 1;
             $this->persister->player1($playerJson);

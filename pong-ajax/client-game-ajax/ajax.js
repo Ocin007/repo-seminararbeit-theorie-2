@@ -89,9 +89,9 @@ function movePlayerWithMouse(ev, player) {
     console.log(ev);
 }
 
-//TODO: Übermitteln der Bewegungen an den Server
 function posSetCallback(xhttp) {
-
+    var response = JSON.parse(xhttp.response);
+    console.log(response);
 }
 
 function enableMovement() {

@@ -43,7 +43,7 @@ class PosSetter {
      * @return bool
      */
     private function dataValid($data) {
-        return isset($data['uuid']) && isset($data['pos']);
+        return isset($data->uuid) && isset($data->pos);
     }
 
     /**
@@ -57,10 +57,10 @@ class PosSetter {
             return ['error' => 'player-data not valid'];
         }
         $content = [
-            'uuid' => $data['uuid'],
-            'pos' => $data['pos']
+            'uuid' => $data->uuid,
+            'pos' => $data->pos
         ];
-        $this->persister[$string]($content);
-        return ['response' => 'set pos to '.$data['pos']];
+        $this->persister->$string($content);
+        return ['response' => 'set pos to '.$data->pos];
     }
 }

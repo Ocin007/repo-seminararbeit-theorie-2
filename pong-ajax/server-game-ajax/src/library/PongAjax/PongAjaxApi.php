@@ -102,7 +102,7 @@ class PongAjaxApi {
      */
     private function setPosition() {
         $data = $this->request->getData();
-        if($data['player'] === 1) {
+        if($data->player === 1) {
             $this->response = $this->posSetter->player1($data);
         } else {
             $this->response = $this->posSetter->player2($data);

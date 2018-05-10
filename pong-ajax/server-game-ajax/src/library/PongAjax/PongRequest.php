@@ -24,7 +24,7 @@ class PongRequest {
             $this->data = NULL;
         } else {
             $this->type = $request->type;
-            $this->data = json_decode($request->data);
+            $this->data = $request->data;
         }
     }
 
