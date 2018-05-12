@@ -65,28 +65,41 @@ function saveConnectionInfos(resObj) {
 function movePlayerWithKey(ev, player) {
     var boolUp = ev.key === 'ArrowUp' || ev.key === 'w';
     var boolDown = ev.key === 'ArrowDown' || ev.key === 's';
-    if(boolUp && settings.pos > 0) {
-        settings.pos = settings.pos - 20;
-    } else if(boolDown && settings.pos < 300) {
-        settings.pos = settings.pos + 20;
+    if(boolUp) {
+        if(settings.pos-20 >= 0) {
+            settings.pos = settings.pos - 20;
+        } else if(settings.pos-20 < 0) {
+            settings.pos = 0;
+        }
+    } else if(boolDown) {
+        if(settings.pos+20 <= 300) {
+            settings.pos = settings.pos + 20;
+        } else if(settings.pos+20 > 300) {
+            settings.pos = 300;
+        }
     }
     if(boolUp || boolDown) {
-
-        //TODO: mögliche code-dublizierung vermeiden
-        player.style.top = settings.pos.toString()+'px';
-        sendAjaxRequest('pos-set', settings, function (xhttp) {
-            responseCallback(xhttp, onError, posSetCallback);
-        });
-
-
+        sendPosition(player);
     }
 }
 
-//TODO: Bewegen mit der Maus
-//TODO: Übermitteln der Bewegungen an den Server
 function movePlayerWithMouse(ev, player) {
-    console.log('movePlayerWithMouse');
-    console.log(ev);
+    // console.log('y = '+(ev.y-155));
+    var pos = ev.y-205;
+    if(pos > 300) {
+        pos = 300;
+    } else if(pos < 0) {
+        pos = 0;
+    }
+    settings.pos = pos;
+    sendPosition(player);
+}
+
+function sendPosition(player) {
+    player.style.top = settings.pos.toString()+'px';
+    sendAjaxRequest('pos-set', settings, function (xhttp) {
+        responseCallback(xhttp, onError, posSetCallback);
+    });
 }
 
 function posSetCallback(xhttp) {

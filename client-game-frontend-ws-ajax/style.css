@@ -19,6 +19,7 @@ body {
     display: flex;
     width: 800px;
     border: 1px solid black;
+    cursor: none;
 }
 #player1-area, #player2-area {
     width: 30px;
