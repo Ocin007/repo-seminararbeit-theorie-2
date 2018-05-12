@@ -30,7 +30,7 @@ class Timer {
      * @throws \Exception
      */
     public function get() {
-        return $this->reader->timestamp();
+        return $this->reader->timestamp(null);
     }
 
     /**

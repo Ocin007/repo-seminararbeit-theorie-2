@@ -9,6 +9,8 @@
 namespace PongAjax;
 
 
+use PongAjax\PongAjax\PosHandler;
+
 class PongAjaxApi {
     const PLAYER_1 = __DIR__.'/../../players/player1.txt';
     const PLAYER_2 = __DIR__.'/../../players/player2.txt';
@@ -28,6 +30,7 @@ class PongAjaxApi {
     private $timer;
     private $connector;
     private $posSetter;
+    private $posGetter;
 
     /**
      * PongAjaxApi constructor.
@@ -45,7 +48,7 @@ class PongAjaxApi {
         $this->timer = new Timer($this->fileReader, $this->filePersister);
         $this->connector = new Connector($this->fileReader, $this->filePersister);
 //        $this->disconnector = new Disconnector($this->fileReader, $this->filePersister);
-//        $this->posGetter = new PosGetter($this->fileReader);
+        $this->posGetter = new PosGetter($this->fileReader);
         $this->posSetter = new PosSetter($this->filePersister);
     }
 
@@ -56,7 +59,8 @@ class PongAjaxApi {
         switch($this->request->getType()) {
             case PongAjaxApi::TYPE_CONNECT: $this->connectPlayer(); break;
             case PongAjaxApi::TYPE_CLEAR: $this->clearAllFiles(); break;
-            case PongAjaxApi::TYPE_POS_SET: $this->setPosition(); break;
+            case PongAjaxApi::TYPE_POS_SET: $this->handlePosition($this->posSetter); break;
+            case PongAjaxApi::TYPE_POS_GET: $this->handlePosition($this->posGetter); break;
             default: $this->response = ['error' => 'undefined type of request'];
         }
     }
@@ -98,14 +102,15 @@ class PongAjaxApi {
     }
 
     /**
+     * @param PosHandler $posHandler
      * @throws \Exception
      */
-    private function setPosition() {
+    private function handlePosition(PosHandler $posHandler) {
         $data = $this->request->getData();
         if($data->player === 1) {
-            $this->response = $this->posSetter->player1($data);
+            $this->response = $posHandler->player1($data);
         } else {
-            $this->response = $this->posSetter->player2($data);
+            $this->response = $posHandler->player2($data);
         }
     }
 }

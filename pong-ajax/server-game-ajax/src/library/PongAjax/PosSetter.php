@@ -9,14 +9,16 @@
 namespace PongAjax;
 
 
-class PosSetter {
+use PongAjax\PongAjax\PosHandler;
+
+class PosSetter implements PosHandler {
     private $persister;
 
     /**
      * PosSetter constructor.
      * @param FilePersister $filePersister
      */
-    public function __construct($filePersister) {
+    public function __construct(FilePersister $filePersister) {
         $this->persister = $filePersister;
     }
 
@@ -48,11 +50,11 @@ class PosSetter {
 
     /**
      * @param $data
-     * @param $string
+     * @param $player
      * @return array
      * @throws \Exception
      */
-    private function setPlayerData($data, $string) {
+    private function setPlayerData($data, $player) {
         if(!$this->dataValid($data)) {
             return ['error' => 'player-data not valid'];
         }
@@ -60,7 +62,7 @@ class PosSetter {
             'uuid' => $data->uuid,
             'pos' => $data->pos
         ];
-        $this->persister->$string($content);
+        $this->persister->$player($content);
         return ['response' => 'set pos to '.$data->pos];
     }
 }

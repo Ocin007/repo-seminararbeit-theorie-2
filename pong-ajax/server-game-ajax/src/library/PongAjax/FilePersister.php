@@ -9,7 +9,9 @@
 namespace PongAjax;
 
 
-class FilePersister {
+use PongAjax\PongAjax\FileHandler;
+
+class FilePersister implements FileHandler{
     private $manager;
 
     /**

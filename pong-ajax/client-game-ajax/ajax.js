@@ -9,7 +9,15 @@ var pong = {
     speedX: null,
     speedY: null
 };
-var intervalID;
+var otherPlayer = {
+    player: null,
+    html: null,
+    pos: 0
+};
+// var interval = {
+//     player: null,
+//     timestamp: null
+// };
 
 function sendAjaxRequest(type, data, callback) {
     var msg = JSON.stringify({
@@ -17,7 +25,7 @@ function sendAjaxRequest(type, data, callback) {
         data: data
     });
     var xhttp = new XMLHttpRequest();
-    xhttp.open('POST', 'http://nwalter/seminararbeit-theorie-2/repo-seminararbeit-theorie-2/pong-ajax/server-game-ajax/');
+    xhttp.open('POST', 'http://nwalter/seminararbeit-theorie-2/repo-seminararbeit-theorie-2/pong-ajax/server-game-ajax/', true);
     xhttp.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
     xhttp.addEventListener('load', function () {
         callback(xhttp);
@@ -31,11 +39,28 @@ function setStatus(status, message) {
     element.innerHTML = message;
 }
 
-//TODO: Im Intervall (per long-polling) die Position des 2. Spielers abfragen
+//Im Intervall (per long-polling) die Position des 2. Spielers abfragen
 function getOtherPlayerMovement() {
-    sendAjaxRequest('pos-get', settings, function (xhttp) {
+    sendAjaxRequest('pos-get', {
+        pos: otherPlayer.pos,
+        player: otherPlayer.player
+    }, function (xhttp) {
         responseCallback(xhttp, onError, function (xhttp) {
-
+            var resObj = JSON.parse(xhttp.response);
+            if(resObj['response'] !== undefined) {
+                var pos = resObj['response'].pos;
+                if(pos !== null) {
+                    otherPlayer.pos = pos;
+                    otherPlayer.html.style.top = pos+'px';
+                }
+                getOtherPlayerMovement();
+            } else if(resObj['error'] !== undefined) {
+                console.log(resObj);
+                setStatus('disconnected', resObj['error']);
+            } else {
+                console.log(resObj);
+                setStatus('disconnected', resObj['exception']);
+            }
         });
     });
 }
@@ -108,14 +133,23 @@ function posSetCallback(xhttp) {
 }
 
 function enableMovement() {
-    var player = (settings.player === 1) ? document.getElementById('player1') : document.getElementById('player2');
+    var player;
+    if(settings.player === 1) {
+        player = document.getElementById('player1');
+        otherPlayer.html = document.getElementById('player2');
+        otherPlayer.player = 2;
+    } else {
+        player = document.getElementById('player2');
+        otherPlayer.html = document.getElementById('player1');
+        otherPlayer.player = 1;
+    }
     player.addEventListener('keypress', function (ev) {
         movePlayerWithKey(ev, player);
     });
     document.getElementById('play-area').addEventListener('mousemove', function (ev) {
         movePlayerWithMouse(ev, player);
     });
-    document.getElementById('play-area').addEventListener('click', function (ev) {
+    document.getElementById('play-area').addEventListener('click', function () {
         player.focus();
     });
     player.tabIndex = 1;

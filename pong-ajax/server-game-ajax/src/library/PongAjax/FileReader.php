@@ -9,7 +9,9 @@
 namespace PongAjax;
 
 
-class FileReader {
+use PongAjax\PongAjax\FileHandler;
+
+class FileReader implements FileHandler {
     private $manager;
 
     /**
@@ -21,26 +23,32 @@ class FileReader {
     }
 
     /**
+     * Parameter $content is not used
+     * @param null $content
      * @return bool|string
      * @throws \Exception
      */
-    public function player1() {
+    public function player1($content) {
         return $this->read($this->manager->getPlayer1());
     }
 
     /**
+     * Parameter $content is not used
+     * @param null $content
      * @return bool|string
      * @throws \Exception
      */
-    public function player2() {
+    public function player2($content) {
         return $this->read($this->manager->getPlayer2());
     }
 
     /**
+     * Parameter $content is not used
+     * @param null $content
      * @return bool|string
      * @throws \Exception
      */
-    public function timestamp() {
+    public function timestamp($content) {
         return $this->read($this->manager->getTimestampFile());
     }
 
