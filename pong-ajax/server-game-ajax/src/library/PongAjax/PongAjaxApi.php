@@ -20,7 +20,7 @@ class PongAjaxApi {
     const TYPE_CLEAR = 'clear';
     const TYPE_POS_GET = 'pos-get';
     const TYPE_POS_SET = 'pos-set';
-    const TYPE_TIMER = 'timer';//TODO: Zurücksenden des Timestamp (long-polling)
+    const TYPE_TIMER = 'timer';
 
     private $request;
     private $response;
@@ -61,6 +61,7 @@ class PongAjaxApi {
             case PongAjaxApi::TYPE_CLEAR: $this->clearAllFiles(); break;
             case PongAjaxApi::TYPE_POS_SET: $this->handlePosition($this->posSetter); break;
             case PongAjaxApi::TYPE_POS_GET: $this->handlePosition($this->posGetter); break;
+            case PongAjaxApi::TYPE_TIMER: $this->getTime(); break;
             default: $this->response = ['error' => 'undefined type of request'];
         }
     }
@@ -112,5 +113,15 @@ class PongAjaxApi {
         } else {
             $this->response = $posHandler->player2($data);
         }
+    }
+
+    /**
+     * @throws \Exception
+     */
+    private function getTime() {
+        do {
+            $time = $this->timer->get();
+        } while($time === '""');
+        $this->response = ['response' => ['timestamp' => $time]];
     }
 }

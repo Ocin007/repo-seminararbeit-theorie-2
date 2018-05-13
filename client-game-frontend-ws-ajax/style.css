@@ -12,6 +12,9 @@ body {
     width: 500px;
     height: 82px;
 }
+#countdown {
+    margin: 0;
+}
 .game-field {
     height: 400px;
 }

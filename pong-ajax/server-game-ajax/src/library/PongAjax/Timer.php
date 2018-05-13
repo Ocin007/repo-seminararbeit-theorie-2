@@ -10,7 +10,7 @@ namespace PongAjax;
 use DateTime;
 
 class Timer {
-    const TIME_BUFFER = 5000;
+    const TIME_BUFFER = 6;
 
     private $reader;
     private $persister;

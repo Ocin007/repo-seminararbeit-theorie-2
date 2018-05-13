@@ -7,17 +7,19 @@ var pong = {
     posX: null,
     posY: null,
     speedX: null,
-    speedY: null
+    speedY: null,
+    pointsP1: 0,
+    pointsP2: 0
 };
 var otherPlayer = {
     player: null,
     html: null,
     pos: 0
 };
-// var interval = {
-//     player: null,
-//     timestamp: null
-// };
+var interval = {
+    player: null,
+    timestamp: null
+};
 
 function sendAjaxRequest(type, data, callback) {
     var msg = JSON.stringify({
@@ -39,7 +41,7 @@ function setStatus(status, message) {
     element.innerHTML = message;
 }
 
-//Im Intervall (per long-polling) die Position des 2. Spielers abfragen
+//Im Intervall (per comet) die Position des 2. Spielers abfragen
 function getOtherPlayerMovement() {
     sendAjaxRequest('pos-get', {
         pos: otherPlayer.pos,
@@ -65,13 +67,38 @@ function getOtherPlayerMovement() {
     });
 }
 
-//TODO: Timestamp (per long-polling) abfragen
+//Timestamp (per long-polling) abfragen
 function getStartTime() {
     sendAjaxRequest('timer', null, function (xhttp) {
         responseCallback(xhttp, onError, function (xhttp) {
-
+            var resObj = JSON.parse(xhttp.response);
+            console.log(resObj);
+            if(resObj['response'] !== undefined) {
+                var timestamp = resObj['response'].timestamp;
+                if(isNaN(timestamp) || timestamp === '""' || timestamp === "") {
+                    getStartTime();
+                } else {
+                    interval.timestamp = setInterval(countDown, 10, timestamp);
+                }
+            } else if(resObj['error'] !== undefined) {
+                console.log(resObj);
+                setStatus('disconnected', resObj['error']);
+            } else {
+                console.log(resObj);
+                setStatus('disconnected', resObj['exception']);
+            }
         });
     });
+}
+
+function countDown(timestamp) {
+    var actualTime = Math.ceil(new Date().getTime()/1000);
+    var diff = timestamp-actualTime;
+    console.log('current: '+actualTime+' server: '+timestamp+' -> '+(timestamp-actualTime));
+    document.getElementById('countdown').innerText = diff.toString();
+    if(diff <= 0) {
+        clearInterval(interval.timestamp);
+    }
 }
 
 function saveConnectionInfos(resObj) {
@@ -128,8 +155,8 @@ function sendPosition(player) {
 }
 
 function posSetCallback(xhttp) {
-    var response = JSON.parse(xhttp.response);
-    console.log(response);
+    // var response = JSON.parse(xhttp.response);
+    // console.log(response);
 }
 
 function enableMovement() {
