@@ -58,13 +58,10 @@ class PosGetter implements PosHandler {
         if(!$this->dataValid($data)) {
             return ['error' => 'player-data not valid'];
         }
-        do {
+//        do {
             $dataStr = $this->reader->$player(null);
             if($dataStr !== '""') {
                 $dataObj = json_decode($dataStr);
-//                var_dump($dataObj);//anderer player neue pos
-//                var_dump($data->pos);//anderer player alte pos
-//                exit;
                 if($dataObj !== null) {
                     $pos = $dataObj->pos;
                 } else {
@@ -73,7 +70,7 @@ class PosGetter implements PosHandler {
             } else {
                 return ['response' => ['pos' => null]];
             }
-        } while ($pos === $data->pos || $pos === null);
+//        } while ($pos === $data->pos || $pos === null);
         return ['response' => ['pos' => $pos]];
     }
 }

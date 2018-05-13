@@ -18,7 +18,7 @@ class PongAjaxApi {
 
     const TYPE_CONNECT = 'connect';
     const TYPE_CLEAR = 'clear';
-    const TYPE_POS_GET = 'pos-get';//TODO: Zurücksenden der Position des anderen Spielers (long-polling)
+    const TYPE_POS_GET = 'pos-get';
     const TYPE_POS_SET = 'pos-set';
     const TYPE_TIMER = 'timer';//TODO: Zurücksenden des Timestamp (long-polling)
 
