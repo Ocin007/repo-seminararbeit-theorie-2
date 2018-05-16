@@ -45,6 +45,7 @@ body {
     height: 30px;
     background-color: black;
     position: absolute;
+    visibility: hidden;
 }
 [data-status='disconnected'] {
     color: red;
