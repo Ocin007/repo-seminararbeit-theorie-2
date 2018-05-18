@@ -29,8 +29,12 @@ var interval = {
 };
 
 function onRequest(request, response) {
-    console.log(request);
-    response.writeHead(200, {"Context-Type": "text/plain"});
+    response.setHeader('Access-Control-Allow-Origin', '*');
+    response.setHeader('Access-Control-Request-Method', '*');
+    response.setHeader('Access-Control-Allow-Methods', 'OPTIONS, GET');
+    response.setHeader('Access-Control-Allow-Headers', '*');
+    response.setHeader('Content-Type', 'application/x-www-form-urlencoded');
+    response.writeHead(200);
     response.write(JSON.stringify(data));
     response.end();
 }
@@ -52,7 +56,7 @@ function testWhenStart() {
                     oldDiff = diff;
                 }
             }
-            interval.game = setInterval(calcMoves, 1000);
+            interval.game = setInterval(calcMoves, 10);
         }, 10);
     } else {
         console.log(getCurrentTime()+' less than 2 players connected');
@@ -60,10 +64,12 @@ function testWhenStart() {
 }
 
 function calcPoints(pos, player) {
-    if(data.y-30 > pos || data.y < pos+100) {
+    if(!(pos+100 > data.y && pos-30 < data.y)) {
         data[player] += 1;
+        console.log(getCurrentTime()+' player('+pos+') pong('+data.y+') -> Point for '+player+'('+data[player]+')');
         return true;
     }
+    console.log(getCurrentTime()+' player('+pos+') pong('+data.y+') -> '+player+' hits');
     return false;
 }
 
@@ -76,8 +82,13 @@ function calcMoves() {
         interval.test = setInterval(testWhenStart, 1000);
         return;
     }
-    var pos1 = JSON.parse(p1String).pos;
-    var pos2 = JSON.parse(p2String).pos;
+    try {
+        var pos1 = JSON.parse(p1String).pos;
+        var pos2 = JSON.parse(p2String).pos;
+    } catch (e){
+        console.log(getCurrentTime()+' JSON.parse Error: p1: '+p1String+' p2: '+p2String);
+        return;
+    }
 
     var newX = data.x+speed.x;
     var newY = data.y+speed.y;
@@ -126,10 +137,10 @@ function calcMoves() {
         speed.x *= -1;
     }
 
-    console.log(getCurrentTime()+
-        ' pos1: '+pos1+', x: '+data.x+', y: '+data.y+
-        ', pos2: '+pos2+' |  Points: '+data.player1+
-        ' : '+data.player2);
+    // console.log(getCurrentTime()+
+    //     ' pos1: '+pos1+', x: '+data.x+', y: '+data.y+
+    //     ', pos2: '+pos2+' |  Points: '+data.player1+
+    //     ' : '+data.player2);
 }
 
 function getCurrentTime() {

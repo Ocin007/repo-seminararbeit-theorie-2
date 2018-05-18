@@ -4,12 +4,15 @@ var settings = {
     pos: 0
 };
 var pong = {
+    html: null,
     posX: null,
     posY: null,
     speedX: null,
     speedY: null,
-    pointsP1: 0,
-    pointsP2: 0
+    sizeX: null,
+    sizeY: null,
+    pointsP1: null,
+    pointsP2: null
 };
 var otherPlayer = {
     player: null,
@@ -17,7 +20,7 @@ var otherPlayer = {
     pos: 0
 };
 var interval = {
-    player: null,
+    game: null,
     timestamp: null
 };
 
@@ -98,7 +101,38 @@ function countDown(timestamp) {
     document.getElementById('countdown').innerText = diff.toString();
     if(diff <= 0) {
         clearInterval(interval.timestamp);
+        setPongToStartPoint();
+        pong.html.style.visibility = 'visible';
+        interval.game = setInterval(pongGame, 10);
     }
+}
+
+function setPongToStartPoint() {
+    movePongTo(pong.sizeX/2, pong.sizeY/2);
+}
+
+function movePongTo(x, y) {
+    pong.html.style.left = x+'px';
+    pong.html.style.top = y+'px';
+}
+
+function pongGame() {
+    var xhttp = new XMLHttpRequest();
+    xhttp.open('GET', 'http://nwalter:8080', true);
+    xhttp.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
+    xhttp.addEventListener('load', function () {
+        responseCallback(xhttp, onError, function (xhttp) {
+            var resObj = JSON.parse(xhttp.response);
+            if(resObj.x !== undefined && resObj.y !== undefined) {
+                movePongTo(resObj.x, resObj.y);
+            }
+            if(resObj.player1 !== undefined && resObj.player2 !== undefined) {
+                pong.pointsP1.innerHTML = resObj.player1;
+                pong.pointsP2.innerHTML = resObj.player2;
+            }
+        });
+    });
+    xhttp.send();
 }
 
 function saveConnectionInfos(resObj) {
@@ -222,4 +256,10 @@ document.addEventListener('DOMContentLoaded', function () {
     document.getElementsByTagName('body')[0].addEventListener('unload', function () {
         sendAjaxRequest('disconnect', settings.player, function (xhttp) {});
     });
+    pong.html = document.getElementById('pong-ball');
+    var pongarea = document.getElementById('pong-area');
+    pong.sizeX = pongarea.clientWidth - 30;
+    pong.sizeY = pongarea.clientHeight - 30;
+    pong.pointsP1 = document.getElementById('player1-points');
+    pong.pointsP2 = document.getElementById('player2-points');
 });
