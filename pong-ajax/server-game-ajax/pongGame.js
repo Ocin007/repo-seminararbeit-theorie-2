@@ -14,7 +14,8 @@ var data = {
 
 var speed = {
     x: 3,
-    y: 2
+    y: 2,
+    res: 4
 };
 
 var files = {
@@ -63,12 +64,33 @@ function testWhenStart() {
     }
 }
 
+function resetSpeed() {
+    speed.res = 4;
+    speed.x = (speed.x < 0) ? -3 : 3;
+    speed.y = (speed.y < 0) ? -2 : 2;
+}
+
+function calcSpeed(alpha) {
+    if(alpha < -50) {
+        alpha = -50;
+    } else if(alpha > 50) {
+        alpha = 50;
+    }
+    var factorX = (speed.x < 0) ? -1 : 1;
+    var factorY = (alpha < 0) ? 1 : -1;
+    speed.res += 0.5;
+    speed.x = (Math.cos((alpha*2*Math.PI)/360) * speed.res) * factorX;
+    speed.y = (Math.sqrt(Math.pow(speed.res, 2)-Math.pow(speed.x, 2))) * factorY;
+    console.log(getCurrentTime()+' Speed: x='+speed.x+' y='+speed.y+' res='+speed.res);
+}
+
 function calcPoints(pos, player) {
     if(!(pos+100 > data.y && pos-30 < data.y)) {
         data[player] += 1;
         console.log(getCurrentTime()+' player('+pos+') pong('+data.y+') -> Point for '+player+'('+data[player]+')');
         return true;
     }
+    calcSpeed((pos+50) - (data.y+15));
     console.log(getCurrentTime()+' player('+pos+') pong('+data.y+') -> '+player+' hits');
     return false;
 }
@@ -80,6 +102,8 @@ function calcMoves() {
         console.log(getCurrentTime()+' server resettet, stop calcMoves()');
         clearInterval(interval.game);
         interval.test = setInterval(testWhenStart, 1000);
+        data.player1 = 0;
+        data.player2 = 0;
         return;
     }
     try {
@@ -135,12 +159,8 @@ function calcMoves() {
         data.x = size.x/2;
         data.y = size.y/2;
         speed.x *= -1;
+        resetSpeed();
     }
-
-    // console.log(getCurrentTime()+
-    //     ' pos1: '+pos1+', x: '+data.x+', y: '+data.y+
-    //     ', pos2: '+pos2+' |  Points: '+data.player1+
-    //     ' : '+data.player2);
 }
 
 function getCurrentTime() {

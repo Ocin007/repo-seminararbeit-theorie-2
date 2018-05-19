@@ -25,11 +25,13 @@ var data = {
 };
 var speed = {
     x: 3,
-    y: 2
+    y: 2,
+    res: 4
 };
 function calcMovement() {
     if(!bothReady()) {
         clearInterval(interval);
+        gameNotStartetYet = true;
         if(player1.ws !== null) {
             if(player1.ws.readyState !== 1) {
                 console.log(getCurrentTime()+' Player1 left the Game');
@@ -98,6 +100,7 @@ function calcMoves() {
         data.x = size.x/2;
         data.y = size.y/2;
         speed.x *= -1;
+        resetSpeed();
     }
     if(player1.ws !== null) {
         if(player1.ws.readyState === 1) {
@@ -111,12 +114,33 @@ function calcMoves() {
     }
 }
 
+function resetSpeed() {
+    speed.res = 4;
+    speed.x = (speed.x < 0) ? -3 : 3;
+    speed.y = (speed.y < 0) ? -2 : 2;
+}
+
+function calcSpeed(alpha) {
+    if(alpha < -50) {
+        alpha = -50;
+    } else if(alpha > 50) {
+        alpha = 50;
+    }
+    var factorX = (speed.x < 0) ? -1 : 1;
+    var factorY = (alpha < 0) ? 1 : -1;
+    speed.res += 0.5;
+    speed.x = (Math.cos((alpha*2*Math.PI)/360) * speed.res) * factorX;
+    speed.y = (Math.sqrt(Math.pow(speed.res, 2)-Math.pow(speed.x, 2))) * factorY;
+    console.log(getCurrentTime()+' Speed: x='+speed.x+' y='+speed.y+' res='+speed.res);
+}
+
 function calcPoints(pos, player) {
     if(!(pos+100 > data.y && pos-30 < data.y)) {
         data[player] += 1;
         console.log(getCurrentTime()+' player('+pos+') pong('+data.y+') -> Point for '+player+'('+data[player]+')');
         return true;
     }
+    calcSpeed((pos+50) - (data.y+15));
     console.log(getCurrentTime()+' player('+pos+') pong('+data.y+') -> '+player+' hits');
     return false;
 }
@@ -150,6 +174,13 @@ function startGame() {
             }
         }
     }
+    data = {
+        type: 'pong-pos',
+        x: size.x/2,
+        y: size.y/2,
+        pointsP1: 0,
+        pointsP2: 0
+    };
     interval = setInterval(calcMovement, 10);
 }
 
@@ -226,7 +257,7 @@ wss.on('connection', function (ws) {
     }));
     if(gameNotStartetYet && bothReady()) {
         gameNotStartetYet = false;
-        startGame();
+        setTimeout(startGame, 10);
     }
 });
 
