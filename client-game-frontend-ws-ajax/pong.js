@@ -2,15 +2,17 @@
  * größe von 'pong-area': 410x, 170y (nach abzug der größe von 'pong-ball')
  */
 document.addEventListener('DOMContentLoaded', function () {
-    var direction = {x: -3, y: -2};
+    var direction = {x: -3, y: -5};
     var pongball = document.getElementById('pong-ball');
     var pongarea = document.getElementById('pong-area');
     var sizeX = pongarea.clientWidth - 30;
     var sizeY = pongarea.clientHeight - 30;
-    var factorX = -1.1;
-    var factorY = -1.1;
+    var factorX = -1;
+    var factorY = -1;
     pongball.style.left = sizeX/2+'px';
     pongball.style.top = sizeY/2+'px';
+    pongball.style.visibility = 'visible';
+    pongarea.style.cursor = 'default';
     pongball.addEventListener('click', function () {
         setInterval(function () {
             var oldX = parseInt(pongball.style.left.slice(0, pongball.style.left.length - 2));
