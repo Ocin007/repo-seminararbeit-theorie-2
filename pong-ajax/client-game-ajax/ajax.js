@@ -103,7 +103,8 @@ function countDown(timestamp) {
         clearInterval(interval.timestamp);
         setPongToStartPoint();
         pong.html.style.visibility = 'visible';
-        interval.game = setInterval(pongGame, 10);
+        // interval.game = setInterval(pongGame, 10);
+        pongGame();
     }
 }
 
@@ -130,6 +131,7 @@ function pongGame() {
                 pong.pointsP1.innerHTML = resObj.player1;
                 pong.pointsP2.innerHTML = resObj.player2;
             }
+            pongGame();
         });
     });
     xhttp.send();
