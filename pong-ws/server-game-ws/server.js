@@ -1,4 +1,4 @@
-console.log('WebSocket Chat Server v0.1 by Nicolas Walter');
+console.log('WebSocket Pong Server v0.1 by Nicolas Walter');
 console.log('--------------------------------------------');
 var WebSocketServer = require('ws').Server;
 var wss = new WebSocketServer({port: 8181});
