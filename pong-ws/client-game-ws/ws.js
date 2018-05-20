@@ -1,4 +1,9 @@
 var ws;
+var playerHtml;
+var bot = {
+    interval: null,
+    rand: 0
+};
 var settings = {
     player: null,
     pos: 0
@@ -43,6 +48,7 @@ function connectToServer() {
         var response = JSON.parse(ev.data);
         switch(response.type) {
             case 'pong-pos': refreshPongAndPoints(response); break;
+            case 'pong-hits-player': toggleColor(response); break;
             case 'player-pos': setOtherPlayerPos(response); break;
             case 'countdown': setCountDown(response.value); break;
             case 'connected': saveConnectionInfos(response); break;
@@ -141,6 +147,9 @@ function enableMovement() {
     });
     player.tabIndex = 1;
     player.focus();
+    player.style.backgroundColor = '#017daf';
+    otherPlayer.html.style.backgroundColor = '#af0000';
+    playerHtml = player;
 }
 
 function saveConnectionInfos(response) {
@@ -157,6 +166,7 @@ function setStatus(status, message) {
 
 document.addEventListener('DOMContentLoaded', function () {
     document.getElementById('connect').addEventListener('click', connectToServer);
+    document.getElementById('connect-as-bot').addEventListener('click', connectAsbot);
     pong.html = document.getElementById('pong-ball');
     var pongarea = document.getElementById('pong-area');
     pong.sizeX = pongarea.clientWidth - 30;
@@ -164,3 +174,31 @@ document.addEventListener('DOMContentLoaded', function () {
     pong.pointsP1 = document.getElementById('player1-points');
     pong.pointsP2 = document.getElementById('player2-points');
 });
+
+function connectAsbot() {
+    connectToServer();
+    bot.interval = setInterval(function () {
+        var pos = pong.html.style.top;
+        var pongPos = {
+            y: parseFloat(pos.slice(0, pos.length-2))+205-50+15+bot.rand
+        };
+        if(playerHtml !== undefined) {
+            movePlayerWithMouse(pongPos, playerHtml);
+        }
+    }, 5);
+}
+
+function toggleColor(response) {
+    if(response.player === settings.player) {
+        playerHtml.style.backgroundColor = '#01b7ff';
+        setTimeout(function () {
+            playerHtml.style.backgroundColor = '#017daf';
+        }, 100);
+    } else {
+        bot.rand = Math.round(Math.random()*100)-50;
+        otherPlayer.html.style.backgroundColor = '#ff0000';
+        setTimeout(function () {
+            otherPlayer.html.style.backgroundColor = '#af0000';
+        }, 100);
+    }
+}

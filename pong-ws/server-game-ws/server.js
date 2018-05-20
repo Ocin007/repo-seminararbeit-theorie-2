@@ -1,4 +1,4 @@
-console.log('WebSocket Pong Server v0.1 by Nicolas Walter');
+console.log('WebSocket Pong Server v0.2 by Nicolas Walter');
 console.log('--------------------------------------------');
 var WebSocketServer = require('ws').Server;
 var wss = new WebSocketServer({port: 8181});
@@ -134,6 +134,23 @@ function calcSpeed(alpha) {
     console.log(getCurrentTime()+' Speed: x='+speed.x+' y='+speed.y+' res='+speed.res);
 }
 
+function sendPongHitsPlayer(player) {
+    var playerGotHit = {
+        type: 'pong-hits-player',
+        player: (player === 'pointsP2') ? 1 : 2
+    };
+    if (player1.ws !== null) {
+        if (player1.ws.readyState === 1) {
+            player1.ws.send(JSON.stringify(playerGotHit));
+        }
+    }
+    if (player2.ws !== null) {
+        if (player2.ws.readyState === 1) {
+            player2.ws.send(JSON.stringify(playerGotHit));
+        }
+    }
+}
+
 function calcPoints(pos, player) {
     if(!(pos+100 > data.y && pos-30 < data.y)) {
         data[player] += 1;
@@ -141,6 +158,7 @@ function calcPoints(pos, player) {
         return true;
     }
     calcSpeed((pos+50) - (data.y+15));
+    sendPongHitsPlayer(player);
     console.log(getCurrentTime()+' player('+pos+') pong('+data.y+') -> '+player+' hits');
     return false;
 }
@@ -180,6 +198,11 @@ function startGame() {
         y: size.y/2,
         pointsP1: 0,
         pointsP2: 0
+    };
+    speed = {
+        x: 3,
+        y: 2,
+        res: 4
     };
     interval = setInterval(calcMovement, 10);
 }

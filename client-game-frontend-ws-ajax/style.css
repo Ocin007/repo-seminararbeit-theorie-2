@@ -32,7 +32,7 @@ body {
 #player1, #player2 {
     width: 30px;
     height: 100px;
-    background-color: red;
+    background-color: #8e0000;
     position: absolute;
 }
 #pong-area {
