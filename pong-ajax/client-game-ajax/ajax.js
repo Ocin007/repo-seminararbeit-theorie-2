@@ -44,7 +44,7 @@ function setStatus(status, message) {
     element.innerHTML = message;
 }
 
-//Im Intervall (per comet) die Position des 2. Spielers abfragen
+//Im Intervall (per long-polling) die Position des 2. Spielers abfragen
 function getOtherPlayerMovement() {
     sendAjaxRequest('pos-get', {
         pos: otherPlayer.pos,
@@ -103,8 +103,8 @@ function countDown(timestamp) {
         clearInterval(interval.timestamp);
         setPongToStartPoint();
         pong.html.style.visibility = 'visible';
-        // interval.game = setInterval(pongGame, 10);
-        pongGame();
+        interval.game = setInterval(pongGame, 10);
+        // pongGame();
     }
 }
 
@@ -131,7 +131,7 @@ function pongGame() {
                 pong.pointsP1.innerHTML = resObj.player1;
                 pong.pointsP2.innerHTML = resObj.player2;
             }
-            pongGame();
+            // pongGame();
         });
     });
     xhttp.send();
