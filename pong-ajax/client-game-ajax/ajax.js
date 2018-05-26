@@ -57,6 +57,7 @@ function getOtherPlayerMovement() {
                 if(pos !== null) {
                     otherPlayer.pos = pos;
                     otherPlayer.html.style.top = pos+'px';
+                    console.log('Empfangen: '+new Date().getTime());
                 }
                 getOtherPlayerMovement();
             } else if(resObj['error'] !== undefined) {
@@ -167,6 +168,7 @@ function movePlayerWithKey(ev, player) {
         }
     }
     if(boolUp || boolDown) {
+        console.log('Gesendet: '+new Date().getTime());
         sendPosition(player);
     }
 }

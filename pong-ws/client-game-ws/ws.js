@@ -72,6 +72,7 @@ function closeConnection(response) {
 function setOtherPlayerPos(response) {
     otherPlayer.pos = response.pos;
     otherPlayer.html.style.top = response.pos+'px';
+    console.log('Empfangen: '+new Date().getTime());
 }
 
 function movePlayerWithKey(ev, player) {
@@ -91,6 +92,7 @@ function movePlayerWithKey(ev, player) {
         }
     }
     if(boolUp || boolDown) {
+        console.log('Gesendet: '+new Date().getTime());
         sendPosition(player);
     }
 }
