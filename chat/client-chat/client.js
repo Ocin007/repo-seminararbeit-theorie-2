@@ -47,8 +47,8 @@ function connect(ev) {
 function disconnect() {
     showConnectionButton();
     ws.close(1000, 'user '+username+' disconnected');
-    var str = '<span class="err-message">[Client]</span> '+'Disconnected from server';
-    insertMessageInDiv(str);
+    var tag = '<span class="err-message">[Client]</span>';
+    insertMessageInDiv(tag, 'Disconnected from server');
 }
 
 function showConnectionButton() {
@@ -64,8 +64,8 @@ function initWS() {
      * Wird ausgeführt, wenn Connection aufgebaut wurde
      */
     ws.onopen = function (e) {
-        var str = '<span class="err-message">[Client]</span> '+'Connection to server opened';
-        insertMessageInDiv(str);
+        var tag = '<span class="err-message">[Client]</span>';
+        insertMessageInDiv(tag, 'Connection to server opened');
         stopLoading();
         document.getElementById('message').focus();
         username = document.getElementById('username').value;
@@ -91,15 +91,15 @@ function initWS() {
                 username: username
             }));
         } else {
-            var str;
+            var tag;
             if(username === response.username) {
-                str = '<span class="response-username">['+response.username+']</span> '+response.message;
+                tag = '<span class="response-username">['+response.username+']</span>';
             } else if(response.username === 'Server') {
-                str = '<span class="err-message">['+response.username+']</span> '+response.message;
+                tag = '<span class="err-message">['+response.username+']</span>';
             } else {
-                str = '<span class="response-otheruser">['+response.username+']</span> '+response.message;
+                tag = '<span class="response-otheruser">['+response.username+']</span>';
             }
-            insertMessageInDiv(str);
+            insertMessageInDiv(tag, response.message);
         }
         console.log(ev.data);
     };
@@ -109,20 +109,24 @@ function initWS() {
      */
     ws.onerror = function (err) {
         console.log(err);
-        insertMessageInDiv('Connection failed', 'err-message');
+        insertMessageInDiv('', 'Connection failed', 'err-message');
         stopLoading();
         showConnectionButton();
     }
 }
 
-function insertMessageInDiv(str, errClass) {
+function insertMessageInDiv(tag, str, errClass) {
     var container = document.getElementById('received-messages');
+    var msgDiv = document.createElement('div');
     var message = document.createElement('p');
-    message.innerHTML = str;
+    msgDiv.classList.add('message');
+    msgDiv.innerHTML = tag;
+    message.innerText = ' '+str;
+    msgDiv.appendChild(message);
     if(errClass !== undefined) {
         message.classList.add(errClass);
     }
-    container.insertBefore(message, container.firstChild);
+    container.insertBefore(msgDiv, container.firstChild);
 }
 
 /**

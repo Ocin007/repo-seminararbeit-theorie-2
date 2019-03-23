@@ -32,6 +32,11 @@ p {
     color: #00c800;
     font-weight: bolder;
 }
+.message {
+    display: flex;
+    flex-direction: row;
+    flex-shrink: 0;
+}
 
 
 
